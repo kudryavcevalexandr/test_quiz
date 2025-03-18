@@ -1,0 +1,173 @@
+[
+  {
+    "question": "Рассчитайте медиану значений общего скора (score), который набрали игроки футбольного клуба ФК \"Реал Магнитогорск\" за сезон. Выведите полученное значение типа float на экран, округлив до 1 знака после запятой.\n  player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94",
+    "options": [
+      "def solution(A):\n    x = A['score'].median()\n  x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    x = A['score'].median\n    x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    x = A['scor'].median()\n    x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    x = A['score'].mean()\n    x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    x = A.median('score')\n    x = round(x, 1)\n    return float(x)",
+      "def solution(A):\n    x = A.median().score\n    x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    from statistics import mean\n    x = mean(A['score'])\n    return round(float(x), 1)",
+      "def solution(A):\n    x = statistics.median(A.score)\n    x = round(float(x), 1)\n    return x",
+      "def solution(D):\n    x = D['score'].median()\n    return x",
+      "def solution(A):\n    x = sorted(A['score'])[len(A['score'])//2]\n    return x",
+      "def solution(A):\n    x = A['score'].median(1)\n    x = float(round(x))\n    return x"
+    ],
+    "answer": "def solution(A):\n    x = A['score'].median()\n  x = round(float(x), 1)\n    return x"
+  },
+  {
+    "question": "Рассчитайте среднее значение веса игроков (weight). Выведите полученное значение типа float на экран, округлив до 5 знаков после запятой.\n player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94\n3              22     191      81     96",
+    "options": [
+      "def solution(A):\n    x = A['weight'].mean()\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    x = A['weight'].mean\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    x = A['height'].mean()\n    x = round(float(x), 5)\n    return x",
+      "def solution(B):\n    x = B['weight'].mean()\n    return round(x, 2)",
+      "def solution(A):\n    x = sum(A['weight']) / len(A['weight'])\n    return float(x)",
+      "def solution(A):\n    x = A.mean(axis=1)['weight']\n    x = round(float(x), 5)\n    return x",
+      "def my_func(A):\n    x = A['weight'].mean()\n    return round(float(x), 5)",
+      "def solution(A):\n    x = A['weight'].sum()\n    return round(float(x), 5)",
+      "def solution(A):\n    x = A.query('weight > 0')['weight'].mean()\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    x = A.groupby('weight')['score'].mean()\n    return round(float(x[0]), 5)",
+      "def solution(A):\n    x = float(A['weight'].mean())\n    return x"
+    ],
+    "answer": "def solution(A):\n    x = A['weight'].mean()\n    x = round(float(x), 5)\n    return x"
+  },
+  {
+    "question": "Рассчитайте среднее значение веса игроков (weight), которые набрали больше 90 баллов за сезон (score). Выведите полученное значение типа float на экран, округлив до 5 знаков после запятой.\n    player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94\n3              22     191      81     96",
+    "options": [
+      "def solution(A): # A - некий датафрейм\n    mask = A['score'] > 90\n    x = (A['weight'][mask]).mean()\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    mask = A['score'] > 90\n    x = A['weight'][mask].mean\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    x = A.loc[A['score'] > 90, 'weight'].sum()\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    filtered = A['score'] > 100\n    x = A['weight'][filtered].mean()\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    mask = A['score'] >= 90\n    x = A['height'][mask].mean()\n    x = round(float(x), 5)\n    return x",
+      "def sol(A):\n    x = A[A['score'] > 90]['weight'].mean()\n    return round(x, 5)",
+      "def solution(A):\n    x = A['weight'].mean()\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    filter = A['score'] > 90\n    x = np.mean(A['weight'][filter])\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    mask = A['score'] > 90\n    x = A['weight'][mask].median()\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    mask = (A['score'] > 90)\n    x = A.loc[mask, 'weight'].min()\n    x = round(float(x), 5)\n    return x",
+      "def solution(A):\n    mask = A['score'] > 90\n    x = A.loc[mask, 'weight'][0]\n    return x"
+    ],
+    "answer": "def solution(A): # A - некий датафрейм\n    mask = A['score'] > 90\n    x = (A['weight'][mask]).mean()\n    x = round(float(x), 5)\n    return x"
+  },
+  {
+    "question": "Рассчитайте среднее значение роста игроков (height), которые весят больше 80 кг и за сезон набрали не меньше 95 баллов (score). Выведите полученное значение типа float на экран, округлив до 1 знака после запятой.\n  player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94\n3              22     191      81     96",
+    "options": [
+      "def solution(A): # A - некий датафрейм\n    mask = (A['weight'] > 80) & (A['score'] >= 95)\n    x = A['height'][mask].mean()\n    x = round(float(x),1)\n    return x",
+      "def solution(A):\n    mask = (A['weight'] > 80) and (A['score'] >= 95)\n    x = A['height'][mask].mean()\n    x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    mask = (A['weight'] > 80) & (A['score'] > 95)\n    x = A['height'][mask].mean()\n    x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    mask = (A['height'] > 80) & (A['score'] >= 95)\n    x = A['weight'][mask].mean()\n    x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    cond = A['weight'] > 80\n    x = A['height'][cond].mean()\n    x = round(float(x), 1)\n    return x",
+      "def sol(A):\n    mask = (A['weight'] > 80) & (A['score'] >= 95)\n    return round(A['height'][mask].mean(), 1)",
+      "def solution(A):\n    mask = (A['weight'] < 80) & (A['score'] <= 95)\n    x = A['height'][mask].mean()\n    x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    mask = (A['weight'] > 80) & (A['score'] >= 95)\n    x = A['height'].mean()\n    return round(float(x), 1)",
+      "def solution(A):\n    mask = (A['weight'] > 80) | (A['score'] >= 95)\n    x = A['height'][mask].mean()\n    return round(float(x), 1)",
+      "def solution(A):\n    mask1 = A['weight'] > 80\n    mask2 = A['score'] >= 95\n    x = A['height'][mask1 & mask2].median()\n    x = round(float(x), 1)\n    return x",
+      "def solution(A):\n    mask = (A['weight'] > 80) & (A['score'] >= 95)\n    x = A[mask]['height'].mean\n    x = round(float(x), 1)\n    return x"
+    ],
+    "answer": "def solution(A): # A - некий датафрейм\n    mask = (A['weight'] > 80) & (A['score'] >= 95)\n    x = A['height'][mask].mean()\n    x = round(float(x),1)\n    return x"
+  },
+  {
+    "question": "Рассчитайте значение моды общего скора игроков (score). Выведите полученное значение на экран, округлив до целого.\n player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94\n3              22     191      81     96\n4              36     185      82     95",
+    "options": [
+      "def solution(A): # A - некий датафрейм\n    x = A['score'].mode()[0]\n    return x",
+      "def solution(A):\n    x = A['score'].mode\n    return x",
+      "def solution(A):\n    x = A['score'].mode()\n    return x[1]",
+      "def solution(A):\n    x = A['score'].value_counts().index[0]\n    return float(x)",
+      "def solution(A):\n    from statistics import mode\n    return mode(A['score'])",
+      "def my_func(A):\n    x = A['score'].mode()[0]\n    return round(x)",
+      "def solution(A):\n    x = A['score'].median()\n    return x",
+      "def solution(A):\n    x = A['score'].unique()[0]\n    return x",
+      "def solution(A):\n    x = A['score'].value_counts().mode()[0]\n    return x",
+      "def solution(A):\n    x = A['score'].count()\n    return int(x)",
+      "def solution(A):\n    x = A.sort_values('score').iloc[0]['score']\n    return x"
+    ],
+    "answer": "def solution(A): # A - некий датафрейм\n    x = A['score'].mode()[0]\n    return x"
+  },
+    {
+    "question": "Рассчитайте 90-й перцентиль роста (height) среди игроков. Выведите результат, округлённый до целого.\n player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94\n3              22     191      81     96\n4              36     185      82     95",
+    "options": [
+      "def solution(A): # A - некий датафрейм\n    x = A['height'].quantile(0.90)\n    x = round(x)\n    return x",
+      "def solution(A):\n    x = A['height'].quantile(0.10)\n    x = round(x)\n    return x",
+      "def solution(A):\n    x = A['height'].median()\n    x = round(x)\n    return x",
+      "def solution(A):\n    x = A['score'].quantile(0.90)\n    x = round(x)\n    return x",
+      "def solution(A):\n    x = A['height'].quantile(0.90)\n    return float(x)",
+      "def solution(A):\n    x = A['height'].max()\n    return round(x)",
+      "def solution(A):\n    x = A['height'].quantile(0.90)\n    x = int(x)\n    return x + 1",
+      "def solution(A):\n    x = A['height'].mean()\n    x = round(x)\n    return x",
+      "def solution(A):\n    return A['height'].quantile(0.50)",
+      "def solution(A):\n    x = A.loc[ A['height'] > 180, 'height'].mean()\n    return round(x)",
+      "def solution(A):\n    percentile_90 = A['height'].quantile(0.90)\n    return int(percentile_90) - 1"
+    ],
+    "answer": "def solution(A): # A - некий датафрейм\n    x = A['height'].quantile(0.90)\n    x = round(x)\n    return x"
+  },
+  {
+    "question": "Определите, сколько уникальных значений в колонке score. Выведите результат как целое число.\n player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94\n3              22     191      81     96\n4              36     185      82     95",
+    "options": [
+      "def solution(A): # A - некий датафрейм\n    x = A['score'].nunique()\n    return x",
+      "def solution(A):\n    x = len(A['score'].unique()) - 1\n    return x",
+      "def solution(A):\n    x = A['score'].unique()\n    return int(x[0])",
+      "def solution(A):\n    x = A['score'].count()\n    return x",
+      "def solution(A):\n    x = A['score'].max() - A['score'].min()\n    return round(x)",
+      "def solution(A):\n    return len(A['score'])",
+      "def solution(A):\n    x = A['score'].value_counts().shape[0]\n    return float(x)",
+      "def solution(A):\n    x = A['score'].unique().sum()\n    return x",
+      "def solution(A):\n    return A['score'].mode()[0]",
+      "def solution(A):\n    x = A['score'].drop_duplicates()\n    return x.size - 1",
+      "def solution(A):\n    return A['score'].value_counts().count() + 1"
+    ],
+    "answer": "def solution(A): # A - некий датафрейм\n    x = A['score'].nunique()\n    return x"
+  },
+  {
+    "question": "Вычислите стандартное отклонение (std) показателя веса (weight). Округлите полученное значение до 2 знаков после запятой.\n player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94\n3              22     191      81     96\n4              36     185      82     95",
+    "options": [
+      "def solution(A): # A - некий датафрейм\n    x = A['weight'].std()\n    x = round(float(x), 2)\n    return x",
+      "def solution(A):\n    x = A['weight'].var()\n    x = round(float(x), 2)\n    return x",
+      "def solution(A):\n    x = A['height'].std()\n    return round(float(x), 2)",
+      "def solution(A):\n    x = A['weight'].mean()\n    x = round(float(x), 2)\n    return x",
+      "def solution(A):\n    from math import sqrt\n    x = A['weight'].var()\n    return sqrt(x)",
+      "def solution(A):\n    x = A['weight'].std\n    return round(float(x), 2)",
+      "def solution(A):\n    x = A['weight'].std()\n    return int(x)",
+      "def my_func(A):\n    x = A['weight'].sum()\n    return round(float(x), 2)",
+      "def solution(A):\n    x = 0\n    for i in A['weight']:\n        x += i\n    return round(float(x), 2)",
+      "def solution(A):\n    import statistics\n    x = statistics.pvariance(A['weight'])\n    return round(float(x), 2)",
+      "def solution(A):\n    x = A['weight'].mean() / A['weight'].count()\n    return round(float(x), 2)"
+    ],
+    "answer": "def solution(A): # A - некий датафрейм\n    x = A['weight'].std()\n    x = round(float(x), 2)\n    return x"
+  },
+  {
+    "question": "Определите размах (max - min) для роста (height). Результат выведите как float.\n player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94\n3              22     191      81     96\n4              36     185      82     95",
+    "options": [
+      "def solution(A): # A - некий датафрейм\n    x = A['height'].max() - A['height'].min()\n    return float(x)",
+      "def solution(A):\n    x = A['score'].max() - A['score'].min()\n    return float(x)",
+      "def solution(A):\n    x = A['height'].max()\n    return x",
+      "def solution(A):\n    x = A['height'].min()\n    return x",
+      "def solution(A):\n    x = A['height'].max() / A['height'].min()\n    return float(round(x))",
+      "def solution(A):\n    x = A['height'].mean() - A['height'].median()\n    return round(float(x), 2)",
+      "def solution(A):\n    x = A['weight'].max() - A['weight'].min()\n    return float(x)",
+      "def sol(A):\n    x = A['height'].max() - A['height'].min()\n    return int(x)",
+      "def solution(A):\n    x = (A['height'].max() + A['height'].min())\n    return float(x)",
+      "def solution(A):\n    x = A['height'].range()\n    return float(x)",
+      "def solution(A):\n    x = A['height'].std()\n    return float(round(x,1))"
+    ],
+    "answer": "def solution(A): # A - некий датафрейм\n    x = A['height'].max() - A['height'].min()\n    return float(x)"
+  },
+  {
+    "question": "Рассчитайте IQR (межквартильный размах) для общего скора (score). Округлите результат до целого.\n player_number  height  weight  score\n0              10     168      76     95\n1               8     176      77     86\n2              12     178      79     94\n3              22     191      81     96\n4              36     185      82     95",
+    "options": [
+      "def solution(A): # A - некий датафрейм\n    Q3 = A['score'].quantile(0.75)\n    Q1 = A['score'].quantile(0.25)\n    x = Q3 - Q1\n    x = round(x)\n    return x",
+      "def solution(A):\n    Q3 = A['score'].quantile(0.25)\n    Q1 = A['score'].quantile(0.75)\n    x = Q3 - Q1\n    return round(x)",
+      "def solution(A):\n    x = A['score'].max() - A['score'].min()\n    return round(x)",
+      "def solution(A):\n    x = A['score'].quantile(0.50)\n    return int(x)",
+      "def solution(A):\n    x = A['score'].quantile(0.75)\n    return round(x)",
+      "def solution(A):\n    Q1 = A['score'].quantile(0.25)\n    x = round(Q1)\n    return x",
+      "def solution(A):\n    x = A['score'].quantile(1.0)\n    return int(x)",
+      "def solution(A):\n    Q3 = A['score'].quantile(0.75)\n    Q1 = A['score'].quantile(0.25)\n    x = Q3 + Q1\n    return round(x)",
+      "def solution(A):\n    Q3 = A['score'].quantile(0.75)\n    Q2 = A['score'].quantile(0.50)\n    return round(Q3 - Q2)",
+      "def solution(A):\n    x = A['score'].mean()\n    return round(x)",
+      "def solution(A):\n    Q3 = A['score'].quantile(0.75)\n    Q1 = A['score'].quantile(0.25)\n    x = (Q3 + Q1) / 2\n    return round(x)"
+    ],
+    "answer": "def solution(A): # A - некий датафрейм\n    Q3 = A['score'].quantile(0.75)\n    Q1 = A['score'].quantile(0.25)\n    x = Q3 - Q1\n    x = round(x)\n    return x"
+  }
+]
+

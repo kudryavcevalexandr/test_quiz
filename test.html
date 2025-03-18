@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестирование с таймером</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #question-container { margin-bottom: 20px; }
+        .option-btn { 
+            display: block; 
+            margin: 5px 0; 
+            padding: 10px; 
+            width: 100%;
+            text-align: left;
+            box-sizing: border-box;
+        }
+        #timer { font-size: 18px; color: red; }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            white-space: pre-wrap; /* чтобы переносились строки внутри */
+        }
+    </style>
+</head>
+<body>
+    <h1>Тест</h1>
+    <p>Баллы: <span id="score">0</span></p>
+    <p id="timer">Осталось: <span id="time-left">10</span> сек.</p>
+    <div id="question-container"></div>
+    <button id="next-btn" disabled>Далее</button>
+    <button id="restart-btn" style="display:none;">Начать заново</button>
+    <button id="save-results-btn" style="display:none;">Сохранить результат в CSV</button>
+
+    <script>
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = localStorage.getItem('quizScore') ? parseInt(localStorage.getItem('quizScore')) : 0;
+
+        // Для таймера
+        let timeLeft = 10;
+        let timer;
+        
+        // Для сбора результатов
+        let results = [];
+        let questionStartTime = 0; // время начала ответа на текущий вопрос (Date.now())
+
+        async function loadQuestions() {
+            const response = await fetch('questions.json'); // Загружаем JSON
+            questions = await response.json();
+            document.getElementById('score').textContent = score;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            clearInterval(timer); // Останавливаем старый таймер
+            timeLeft = 10;
+            document.getElementById('time-left').textContent = timeLeft;
+            startTimer();
+            questionStartTime = Date.now(); // Запоминаем время начала
+
+            const container = document.getElementById('question-container');
+            container.innerHTML = '';
+            document.getElementById('next-btn').disabled = true;
+
+            if (currentQuestionIndex >= questions.length) {
+                container.innerHTML = `<h2>Тест завершен!</h2><p>Ваш итоговый счет: ${score}</p>`;
+                document.getElementById('restart-btn').style.display = 'block';
+                document.getElementById('save-results-btn').style.display = 'inline-block';
+                return;
+            }
+
+            const q = questions[currentQuestionIndex];
+            
+            // Заголовок вопроса
+            const questionElem = document.createElement('h2');
+            questionElem.textContent = q.question;
+            container.appendChild(questionElem);
+
+            // Если нужно красивее отображать код из q.question,
+            // можно найти там блоки с кодом и обернуть в <pre>:
+            // Пример, если в q.question есть «def solution(A): ...»,
+            // мы могли бы предварительно заполнять его как:
+            // questionElem.innerHTML = q.question.replaceAll('\n', '<br>') 
+            // и т.п.
+            // Но т.к. в JSON уже храним переносы, оставим как есть.
+
+            // Выводим варианты
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.innerHTML = option.replaceAll('\n','<br>'); 
+                // заменяем \n на <br>, чтобы код был с переносами
+                btn.classList.add('option-btn');
+                btn.onclick = () => checkAnswer(option, q.answer);
+                container.appendChild(btn);
+            });
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time-left').textContent = timeLeft;
+                if (timeLeft === 0) {
+                    clearInterval(timer);
+                    alert("Время вышло!");
+                    recordResult(null, false, timeLeft); // пользователь не успел
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(selected, correct) {
+            clearInterval(timer); // Останавливаем таймер
+            const isCorrect = (selected === correct);
+
+            if (isCorrect) {
+                alert("Правильно!");
+                score++;
+                localStorage.setItem('quizScore', score);
+                document.getElementById('score').textContent = score;
+            } else {
+                alert("Ошибка!");
+            }
+
+            recordResult(selected, isCorrect, timeLeft);
+
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function recordResult(userAnswer, isCorrect, timeLeftRemaining) {
+            // время, затраченное на вопрос (в секундах):
+            const timeSpent = 10 - timeLeftRemaining;
+            const now = new Date();
+            const questionObj = questions[currentQuestionIndex] || {};
+            
+            // Записываем в results
+            results.push({
+                date: now.toLocaleDateString() + ' ' + now.toLocaleTimeString(),
+                questionIndex: currentQuestionIndex,
+                question: questionObj.question,
+                correctAnswer: questionObj.answer,
+                userAnswer: userAnswer === null ? 'NO_ANSWER' : userAnswer,
+                isCorrect: isCorrect,
+                timeSpent: timeSpent
+            });
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        function restartQuiz() {
+            score = 0;
+            currentQuestionIndex = 0;
+            localStorage.setItem('quizScore', score);
+            document.getElementById('score').textContent = score;
+            document.getElementById('restart-btn').style.display = 'none';
+            document.getElementById('save-results-btn').style.display = 'none';
+            results = []; // очищаем предыдущие результаты
+            showQuestion();
+        }
+
+        // Генерация CSV и загрузка
+        function saveResultsToCSV() {
+            if (results.length === 0) {
+                alert("Нет результатов для сохранения!");
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,"
+                + "date,questionIndex,question,correctAnswer,userAnswer,isCorrect,timeSpent\n"
+                + results.map(r => {
+                    // экранируем запятые в вопросах/ответах двойными кавычками
+                    const esc = text => `"${String(text).replace(/"/g, '""')}"`;
+                    return [
+                        esc(r.date),
+                        esc(r.questionIndex),
+                        esc(r.question),
+                        esc(r.correctAnswer),
+                        esc(r.userAnswer),
+                        esc(r.isCorrect),
+                        esc(r.timeSpent)
+                    ].join(",");
+                }).join("\n");
+
+            // Создаем ссылку для скачивания
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "test_results.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.getElementById('next-btn').addEventListener('click', nextQuestion);
+        document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+        document.getElementById('save-results-btn').addEventListener('click', saveResultsToCSV);
+
+        loadQuestions();
+    </script>
+</body>
+</html>
+
