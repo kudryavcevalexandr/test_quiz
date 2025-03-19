@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Тестирование</title>
+  <title>Тестирование с сохранением на GitHub</title>
   <style>
     body { font-family: Arial, sans-serif; }
     #question-container { margin-bottom: 20px; }
@@ -23,7 +23,6 @@
   <div id="question-container"></div>
   <button id="next-btn" disabled>Далее</button>
   <button id="restart-btn" style="display:none;">Начать заново</button>
-  <button id="save-results-btn" style="display:none;">Сохранить результат в JSON</button>
 
   <script>
     let questions = [];
@@ -31,6 +30,15 @@
     let score = 0;
     let results = [];
     let questionStartTime = 0;
+
+    // Функция перемешивания массива (алгоритм Фишера-Йетса)
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
 
     async function loadQuestions() {
       const response = await fetch('basic_stat_measures.json');
@@ -46,19 +54,23 @@
 
       if (currentQuestionIndex >= questions.length) {
         container.innerHTML = `<h2>Тест завершен!</h2><p>Ваш итоговый счет: ${score}</p>`;
+        // При завершении теста отправляем результаты на GitHub
+        saveResultsToGitHub();
         document.getElementById('restart-btn').style.display = 'block';
-        document.getElementById('save-results-btn').style.display = 'inline-block';
         return;
       }
 
-      // Фиксируем время запуска страницы (вопроса)
+      // Фиксируем время запуска вопроса
       questionStartTime = Date.now();
       const q = questions[currentQuestionIndex];
       const questionElem = document.createElement('h2');
       questionElem.textContent = q.question;
       container.appendChild(questionElem);
 
-      q.options.forEach(option => {
+      // Перемешиваем варианты ответа
+      const shuffledOptions = shuffle(q.options.slice());
+
+      shuffledOptions.forEach(option => {
         const btn = document.createElement('button');
         btn.innerHTML = option.replaceAll('\n','<br>');
         btn.classList.add('option-btn');
@@ -103,29 +115,61 @@
       results = [];
       document.getElementById('score').textContent = score;
       document.getElementById('restart-btn').style.display = 'none';
-      document.getElementById('save-results-btn').style.display = 'none';
       showQuestion();
     }
 
-    function saveResultsToJSON() {
-      if (results.length === 0) {
-        alert("Нет результатов для сохранения!");
-        return;
-      }
-      const dataStr = JSON.stringify(results, null, 2);
-      const blob = new Blob([dataStr], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", "test_results.json");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    // Функция сохранения результатов в GitHub
+    function saveResultsToGitHub() {
+      // Настройки репозитория и файла
+      const repoOwner = 'your-username';            // Замените на ваше имя пользователя GitHub
+      const repoName = 'your-repository';             // Замените на название репозитория
+      const filePath = 'test_results.json';           // Путь к файлу в репозитории
+      const githubToken = 'YOUR_GITHUB_TOKEN';        // Ваш персональный токен доступа
+      const commitMessage = 'Update test results';
+
+      const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+      const fileContent = btoa(JSON.stringify(results, null, 2));
+
+      fetch(apiUrl, {
+        headers: { 'Authorization': `token ${githubToken}` }
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          return null;
+        }
+      })
+      .then(data => {
+        let sha = data ? data.sha : undefined;
+        let payload = {
+          message: commitMessage,
+          content: fileContent,
+          branch: 'main'
+        };
+        if (sha) {
+          payload.sha = sha;
+        }
+        return fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Результаты успешно сохранены на GitHub:', data);
+      })
+      .catch(error => {
+        console.error('Ошибка при сохранении результатов на GitHub:', error);
+      });
     }
 
     document.getElementById('next-btn').addEventListener('click', nextQuestion);
     document.getElementById('restart-btn').addEventListener('click', restartQuiz);
-    document.getElementById('save-results-btn').addEventListener('click', saveResultsToJSON);
 
     loadQuestions();
   </script>

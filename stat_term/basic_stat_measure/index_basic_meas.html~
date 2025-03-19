@@ -33,7 +33,7 @@
     let questionStartTime = 0;
 
     async function loadQuestions() {
-      const response = await fetch('questions.json');
+      const response = await fetch('basic_stat_measures.json');
       questions = await response.json();
       document.getElementById('score').textContent = score;
       showQuestion();
