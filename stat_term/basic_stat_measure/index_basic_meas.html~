@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тестирование</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #question-container { margin-bottom: 20px; }
+    .option-btn { 
+      display: block; 
+      margin: 5px 0; 
+      padding: 10px; 
+      width: 100%;
+      text-align: left;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <h1>Тест</h1>
+  <p>Баллы: <span id="score">0</span></p>
+  <div id="question-container"></div>
+  <button id="next-btn" disabled>Далее</button>
+  <button id="restart-btn" style="display:none;">Начать заново</button>
+  <button id="save-results-btn" style="display:none;">Сохранить результат в JSON</button>
+
+  <script>
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let results = [];
+    let questionStartTime = 0;
+
+    async function loadQuestions() {
+      const response = await fetch('questions.json');
+      questions = await response.json();
+      document.getElementById('score').textContent = score;
+      showQuestion();
+    }
+
+    function showQuestion() {
+      document.getElementById('next-btn').disabled = true;
+      const container = document.getElementById('question-container');
+      container.innerHTML = '';
+
+      if (currentQuestionIndex >= questions.length) {
+        container.innerHTML = `<h2>Тест завершен!</h2><p>Ваш итоговый счет: ${score}</p>`;
+        document.getElementById('restart-btn').style.display = 'block';
+        document.getElementById('save-results-btn').style.display = 'inline-block';
+        return;
+      }
+
+      // Фиксируем время запуска страницы (вопроса)
+      questionStartTime = Date.now();
+      const q = questions[currentQuestionIndex];
+      const questionElem = document.createElement('h2');
+      questionElem.textContent = q.question;
+      container.appendChild(questionElem);
+
+      q.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.innerHTML = option.replaceAll('\n','<br>');
+        btn.classList.add('option-btn');
+        btn.onclick = () => checkAnswer(option, q.answer);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected, correct) {
+      const answerTime = Date.now();
+      const timeSpent = ((answerTime - questionStartTime) / 1000).toFixed(2);
+      const isCorrect = (selected === correct);
+
+      alert(isCorrect ? "Правильно!" : "Ошибка!");
+      if (isCorrect) {
+        score++;
+        document.getElementById('score').textContent = score;
+      }
+
+      results.push({
+        pageLaunchTime: new Date(questionStartTime).toLocaleString(),
+        answerTime: new Date(answerTime).toLocaleString(),
+        questionIndex: currentQuestionIndex,
+        question: questions[currentQuestionIndex].question,
+        correctAnswer: correct,
+        userAnswer: selected,
+        isCorrect: isCorrect,
+        timeSpent: timeSpent
+      });
+
+      document.getElementById('next-btn').disabled = false;
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function restartQuiz() {
+      score = 0;
+      currentQuestionIndex = 0;
+      results = [];
+      document.getElementById('score').textContent = score;
+      document.getElementById('restart-btn').style.display = 'none';
+      document.getElementById('save-results-btn').style.display = 'none';
+      showQuestion();
+    }
+
+    function saveResultsToJSON() {
+      if (results.length === 0) {
+        alert("Нет результатов для сохранения!");
+        return;
+      }
+      const dataStr = JSON.stringify(results, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "test_results.json");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    document.getElementById('next-btn').addEventListener('click', nextQuestion);
+    document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+    document.getElementById('save-results-btn').addEventListener('click', saveResultsToJSON);
+
+    loadQuestions();
+  </script>
+</body>
+</html>
+
