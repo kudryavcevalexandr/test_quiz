@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Тестирование с сохранением на GitHub</title>
+  <title>Тестирование</title>
   <style>
     body { 
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
     }
-    /* Фиксированная шапка с вопросом */
+    /* Фиксированная шапка с вопросом – только вопрос, ограниченная по высоте */
     header#question-header {
       position: fixed;
       top: 0;
@@ -22,12 +22,20 @@
       width: fit-content;
       max-width: 100%;
       box-sizing: border-box;
+      max-height: 50px;
+      overflow-y: auto;
     }
-    /* Основное содержимое с отступом сверху, который задаётся динамически */
+    /* Уменьшенный шрифт вопроса (например, в 2 раза меньше стандартного) */
+    header#question-header h2 {
+      font-size: 0.75em;
+      margin: 0;
+    }
+    /* Основное содержимое – варианты ответов */
     main#question-container {
       padding: 10px;
+      /* отступ сверху будет задаваться программно, чтобы не перекрывать шапку */
     }
-    /* Фиксированный футер с кнопками */
+    /* Фиксированный подвал с навигацией и информацией */
     footer#footer {
       position: fixed;
       bottom: 0;
@@ -36,7 +44,19 @@
       background: #fff;
       padding: 10px;
       border-top: 1px solid #ccc;
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+    }
+    /* Левая часть подвала – навигация */
+    #footer-nav {
+      display: flex;
+      gap: 10px;
+    }
+    /* Правая часть подвала – информация (Тест, Баллы) */
+    #footer-info {
+      font-size: 0.9em;
     }
     .option-btn {
       display: block;
@@ -54,20 +74,23 @@
   </style>
 </head>
 <body>
-  <!-- Фиксированная шапка с вопросом и счётом -->
+  <!-- Шапка с вопросом -->
   <header id="question-header">
-    <h1>Тест</h1>
-    <p>Баллы: <span id="score">0</span></p>
     <h2 id="question-text"></h2>
   </header>
 
   <!-- Основное содержимое: варианты ответов -->
   <main id="question-container"></main>
 
-  <!-- Фиксированный футер с кнопками -->
+  <!-- Подвал с кнопками и информацией -->
   <footer id="footer">
-    <button id="next-btn" disabled>Далее</button>
-    <button id="restart-btn" style="display:none;">Начать заново</button>
+    <div id="footer-nav">
+      <button id="next-btn" disabled>Далее</button>
+      <button id="restart-btn" style="display:none;">Начать заново</button>
+    </div>
+    <div id="footer-info">
+      Тест | Баллы: <span id="score">0</span>
+    </div>
   </footer>
 
   <script>
@@ -89,15 +112,19 @@
     async function loadQuestions() {
       const response = await fetch('basic_stat_measures.json');
       questions = await response.json();
-      document.getElementById('score').textContent = score;
+      updateScore();
       showQuestion();
+    }
+
+    function updateScore() {
+      document.getElementById('score').textContent = score;
     }
 
     function showQuestion() {
       document.getElementById('next-btn').disabled = true;
       const container = document.getElementById('question-container');
       container.innerHTML = "";
-
+      
       if (currentQuestionIndex >= questions.length) {
         container.innerHTML = `<h2>Тест завершен!</h2><p>Ваш итоговый счет: ${score}</p>`;
         saveResultsToGitHub();
@@ -131,7 +158,7 @@
       alert(isCorrect ? "Правильно!" : "Ошибка!");
       if (isCorrect) {
         score++;
-        document.getElementById('score').textContent = score;
+        updateScore();
         btnElement.classList.add('correct-answer');
       }
       
@@ -158,7 +185,7 @@
       score = 0;
       currentQuestionIndex = 0;
       results = [];
-      document.getElementById('score').textContent = score;
+      updateScore();
       document.getElementById('restart-btn').style.display = 'none';
       showQuestion();
     }
@@ -227,4 +254,4 @@
   </script>
 </body>
 </html>
-
+basic_stat_measures
