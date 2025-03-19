@@ -15,15 +15,17 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
       background: #fff;
       z-index: 1000;
-      padding: 10px;
+      padding: 5px 10px;
       border-bottom: 1px solid #ccc;
+      width: fit-content;
+      max-width: 100%;
+      box-sizing: border-box;
     }
-    /* Основное содержимое (варианты ответов) с отступом сверху и снизу */
+    /* Основное содержимое с отступом сверху, который задаётся динамически */
     main#question-container {
-      margin: 100px 10px 80px 10px; /* отступ сверху под шапку и снизу под футер */
+      padding: 10px;
     }
     /* Фиксированный футер с кнопками */
     footer#footer {
@@ -45,16 +47,16 @@
       box-sizing: border-box;
       cursor: pointer;
     }
-    /* Подсветка правильного ответа */
+    /* Подсветка выбранного правильного ответа */
     .correct-answer {
-      background-color: #c8e6c9; /* светло-зелёный */
+      background-color: #c8e6c9;
     }
   </style>
 </head>
 <body>
   <!-- Фиксированная шапка с вопросом и счётом -->
   <header id="question-header">
-    <h5>Тест</h5>
+    <h1>Тест</h1>
     <p>Баллы: <span id="score">0</span></p>
     <h2 id="question-text"></h2>
   </header>
@@ -92,14 +94,12 @@
     }
 
     function showQuestion() {
-      // Отключаем кнопку "Далее"
       document.getElementById('next-btn').disabled = true;
       const container = document.getElementById('question-container');
       container.innerHTML = "";
 
       if (currentQuestionIndex >= questions.length) {
         container.innerHTML = `<h2>Тест завершен!</h2><p>Ваш итоговый счет: ${score}</p>`;
-        // Отправляем результаты на GitHub
         saveResultsToGitHub();
         document.getElementById('restart-btn').style.display = 'inline-block';
         return;
@@ -108,7 +108,7 @@
       // Фиксируем время запуска вопроса
       questionStartTime = Date.now();
       const q = questions[currentQuestionIndex];
-      // Обновляем шапку с вопросом
+      // Обновляем текст вопроса в шапке
       document.getElementById('question-text').textContent = q.question;
 
       // Перемешиваем варианты ответа
@@ -118,7 +118,6 @@
         const btn = document.createElement('button');
         btn.innerHTML = option.replaceAll('\n','<br>');
         btn.classList.add('option-btn');
-        // Передаём event.target, чтобы можно было подсветить выбранный вариант
         btn.addEventListener('click', (event) => checkAnswer(option, q.answer, event.target));
         container.appendChild(btn);
       });
@@ -133,7 +132,6 @@
       if (isCorrect) {
         score++;
         document.getElementById('score').textContent = score;
-        // Подсвечиваем выбранный вариант при правильном ответе
         btnElement.classList.add('correct-answer');
       }
       
@@ -165,12 +163,12 @@
       showQuestion();
     }
 
-    // Функция сохранения результатов в GitHub
+    // Функция сохранения результатов в GitHub (настройте параметры под себя)
     function saveResultsToGitHub() {
-      const repoOwner = 'your-username';    // замените на ваше имя пользователя GitHub
-      const repoName = 'your-repository';     // замените на название репозитория
-      const filePath = 'test_results.json';   // путь к файлу в репозитории
-      const githubToken = 'YOUR_GITHUB_TOKEN';// ваш персональный токен доступа
+      const repoOwner = 'your-username';    
+      const repoName = 'your-repository';     
+      const filePath = 'test_results.json';   
+      const githubToken = 'YOUR_GITHUB_TOKEN';
       const commitMessage = 'Update test results';
       const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
       const fileContent = btoa(JSON.stringify(results, null, 2));
@@ -210,6 +208,17 @@
         console.error('Ошибка при сохранении результатов на GitHub:', error);
       });
     }
+
+    // Функция, которая устанавливает отступ для основного содержимого равным высоте шапки
+    function adjustMainMargin() {
+      const header = document.getElementById('question-header');
+      const main = document.getElementById('question-container');
+      main.style.marginTop = header.offsetHeight + 'px';
+    }
+
+    // Запускаем корректировку отступа при загрузке страницы и изменении размера окна
+    window.addEventListener('load', adjustMainMargin);
+    window.addEventListener('resize', adjustMainMargin);
 
     document.getElementById('next-btn').addEventListener('click', nextQuestion);
     document.getElementById('restart-btn').addEventListener('click', restartQuiz);
