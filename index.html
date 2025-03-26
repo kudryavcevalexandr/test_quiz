@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Просмотр тем</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 1em;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      max-width: 600px;
+      margin: auto;
+    }
+    li {
+      margin-bottom: 12px;
+    }
+    a {
+      display: block;
+      background-color: #1e88e5;
+      color: white;
+      text-decoration: none;
+      padding: 12px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    a:hover {
+      background-color: #1565c0;
+    }
+  </style>
+</head>
+<body>
+  <h1>👁️‍🗨️ Просмотр тем</h1>
+  <ul id="theme-list">
+    <li>Загрузка списка тем...</li>
+  </ul>
+
+  <script>
+    fetch("data/index.json")
+      .then(response => response.json())
+      .then(themes => {
+        const list = document.getElementById("theme-list");
+        list.innerHTML = ""; // очистить
+
+        themes.forEach(theme => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = `review_page.html?file=${encodeURIComponent(theme.file)}`;
+          a.target = "_blank";
+          a.textContent = theme.name;
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+      })
+      .catch(err => {
+        document.getElementById("theme-list").innerHTML = `<li style="color:red;">❌ Не удалось загрузить темы</li>`;
+        console.error("Ошибка загрузки index.json:", err);
+      });
+  </script>
+</body>
+</html>
+ 

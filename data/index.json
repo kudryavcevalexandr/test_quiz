@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Основные статистические меры",
+    "file": "basic_stat_measures.json"
+  },
+  {
+    "name": "Распределения и вероятности",
+    "file": "distribution_probalities.json"
+  },
+  {
+    "name": "Гипотезы и тестирование",
+    "file": "3.gypotes_test.json"
+  },
+  {
+    "name": "Корреляция и регрессия",
+    "file": "4.correl_regr.json"
+  },
+  {
+    "name": "Анализ данных и машинное обучение",
+    "file": "5.ds_ml.json"
+  },
+  {
+    "name": "Метрики оценки моделей",
+    "file": "6.model_evaluat_metr.json"
+  }
+]
