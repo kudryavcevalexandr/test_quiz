@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Просмотр вопросов</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      padding: 2em;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .question-block {
+      background: #1e1e1e;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 1em;
+      margin-bottom: 1.5em;
+    }
+    .question {
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    }
+    .answer {
+      color: #8bc34a;
+    }
+    footer {
+      margin-top: 3em;
+      text-align: center;
+      font-size: 0.8em;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>Просмотр вопросов</h1>
+  <div id="content">Загрузка...</div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const file = params.get("file");
+
+    const content = document.getElementById("content");
+
+    if (!file) {
+      content.innerHTML = "<p style='color:red;'>❌ Файл не указан в URL</p>";
+    } else {
+      fetch(`data/${file}?t=${Date.now()}`)
+        .then(res => res.json())
+        .then(data => {
+          content.innerHTML = "";
+          data.forEach((q, index) => {
+            const block = document.createElement("div");
+            block.className = "question-block";
+
+            const question = document.createElement("div");
+            question.className = "question";
+            question.textContent = `${index + 1}. ${q.question}`;
+
+            const answer = document.createElement("div");
+            answer.className = "answer";
+            answer.innerHTML = `✅ Правильный ответ: <strong>${q.answer}</strong>`;
+
+            block.appendChild(question);
+            block.appendChild(answer);
+            content.appendChild(block);
+          });
+        })
+        .catch(err => {
+          content.innerHTML = "<p style='color:red;'>❌ Ошибка загрузки файла</p>";
+          console.error("Ошибка загрузки JSON:", err);
+        });
+    }
+  </script>
+
+  <footer>
+    © 2025 | Просмотр тем тестирования
+  </footer>
+</body>
+</html>
+
