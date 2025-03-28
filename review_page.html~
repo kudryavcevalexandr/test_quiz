@@ -64,7 +64,7 @@
 
             const answer = document.createElement("div");
             answer.className = "answer";
-            answer.innerHTML = `✅ : <strong>${q.answer}</strong>`;
+            answer.innerHTML = `✅ Правильный ответ: <strong>${q.answer}</strong>`;
 
             block.appendChild(question);
             block.appendChild(answer);
