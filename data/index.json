@@ -23,4 +23,9 @@
     "name": "Метрики оценки моделей",
     "file": "6.model_evaluat_metr.json"
   }
+  ,
+  {
+    "name": "Алгоритмы",
+    "file": "algo.json"
+  }
 ]
