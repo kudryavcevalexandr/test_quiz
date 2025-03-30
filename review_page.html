@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,8 +5,7 @@
   <title>Просмотр вопросов</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-<style>
+  <style>
     body {
       background-color: #121212;
       color: #e0e0e0;
@@ -53,59 +51,68 @@
 </head>
 <body>
 
-<script>
-  const params = new URLSearchParams(location.search);
-  const file = params.get("file");
+  <h1>Просмотр вопросов</h1>
+  <div id="content">Загрузка...</div>
 
-  const content = document.getElementById("content");
+  <script>
+    const params = new URLSearchParams(location.search);
+    const file = params.get("file");
 
-  if (!file) {
-    content.innerHTML = "<p style='color:red;'>❌ Файл не указан в URL</p>";
-  } else {
-    fetch(`data/${file}?t=${Date.now()}`)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error("Ошибка загрузки файла");
-        }
-        return res.json();
-      })
-      .then(data => {
-        content.innerHTML = "";
+    const content = document.getElementById("content");
 
-        const escapeHTML = str =>
-          str.replace(/&/g, "&amp;")
-             .replace(/</g, "&lt;")
-             .replace(/>/g, "&gt;");
-
-        // Всегда предполагаем новый формат — объект: { "термин": "описание или код", ... }
-        let index = 1;
-        for (const [term, definition] of Object.entries(data)) {
-          const block = document.createElement("div");
-          block.className = "question-block";
-
-          const question = document.createElement("div");
-          question.className = "question";
-          question.textContent = `${index++}. ${term}`;
-
-          const answer = document.createElement("div");
-          answer.className = "answer";
-
-          const isMultilineCode = definition.includes("\n") || definition.includes("    ");
-          if (isMultilineCode) {
-            answer.innerHTML = `<pre><code>${escapeHTML(definition)}</code></pre>`;
-          } else {
-            answer.innerHTML = `📘 <strong>${definition}</strong>`;
+    if (!file) {
+      content.innerHTML = "<p style='color:red;'>❌ Файл не указан в URL</p>";
+    } else {
+      fetch(`data/${file}?t=${Date.now()}`)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error("Ошибка загрузки файла");
           }
+          return res.json();
+        })
+        .then(data => {
+          content.innerHTML = "";
 
-          block.appendChild(question);
-          block.appendChild(answer);
-          content.appendChild(block);
-        }
-      })
-      .catch(err => {
-        content.innerHTML = "<p style='color:red;'>❌ Ошибка загрузки файла</p>";
-        console.error("Ошибка загрузки JSON:", err);
-      });
-  }
-</script>
+          const escapeHTML = str =>
+            str.replace(/&/g, "&amp;")
+               .replace(/</g, "&lt;")
+               .replace(/>/g, "&gt;");
+
+          let index = 1;
+          for (const [term, definition] of Object.entries(data)) {
+            const block = document.createElement("div");
+            block.className = "question-block";
+
+            const question = document.createElement("div");
+            question.className = "question";
+            question.textContent = `${index++}. ${term}`;
+
+            const answer = document.createElement("div");
+            answer.className = "answer";
+
+            const isMultilineCode = definition.includes("\n") || definition.includes("    ");
+            if (isMultilineCode) {
+              answer.innerHTML = `<pre><code>${escapeHTML(definition)}</code></pre>`;
+            } else {
+              answer.innerHTML = `📘 <strong>${definition}</strong>`;
+            }
+
+            block.appendChild(question);
+            block.appendChild(answer);
+            content.appendChild(block);
+          }
+        })
+        .catch(err => {
+          content.innerHTML = "<p style='color:red;'>❌ Ошибка загрузки файла</p>";
+          console.error("Ошибка загрузки JSON:", err);
+        });
+    }
+  </script>
+
+  <footer>
+    © 2025 | Просмотр тем тестирования
+  </footer>
+
+</body>
+</html>
 
