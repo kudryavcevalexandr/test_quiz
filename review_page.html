@@ -10,11 +10,16 @@
       background-color: #121212;
       color: #e0e0e0;
       font-family: Arial, sans-serif;
-      padding: 2em;
+      margin: 0;
+      padding: clamp(12px, 2vw, 28px);
     }
     h1 {
       text-align: center;
       margin-bottom: 1em;
+    }
+    #content {
+      width: min(1800px, 96vw);
+      margin: 0 auto;
     }
     .question-block {
       background: #1e1e1e;
@@ -22,6 +27,7 @@
       border-radius: 8px;
       padding: 1em;
       margin-bottom: 1.5em;
+      box-sizing: border-box;
     }
     .question {
       font-weight: bold;
@@ -34,12 +40,13 @@
       background: #2c2c2c;
       padding: 1em;
       border-radius: 6px;
-      overflow-x: auto;
+      overflow-x: hidden;
       white-space: pre-wrap;
       word-break: break-word;
       margin-top: 0.5em;
       color: #c8e6c9;
       font-family: monospace;
+      font-size: clamp(12px, 1.2vw, 15px);
     }
     footer {
       margin-top: 3em;
